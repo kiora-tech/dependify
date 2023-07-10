@@ -1,5 +1,5 @@
 image:
-    name: jakzal/phpqa:php8.1
+    name: jakzal/phpqa:php8.2
     pull_policy: if-not-present
 
 cache:
@@ -63,12 +63,16 @@ phpunit:
 build-php:
     stage: build
     script:
-        - composer install --no-dev --optimize-autoloader --ignore-platform-reqs --prefer-dist --no-scripts
+        - echo "APP_ENV=prod" >> .env.local
+        - composer install --no-dev --optimize-autoloader --ignore-platform-reqs --prefer-dist
+        - php bin/console assets:install --env=prod --no-debug
+        - rm .env.local
     only:
         - tags
     artifacts:
         paths:
             - vendor
+            - public/bundles
 
 build-node:
     stage: build
